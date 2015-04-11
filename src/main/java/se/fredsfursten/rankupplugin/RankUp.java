@@ -12,12 +12,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.tyrannyofheaven.bukkit.zPermissions.ZPermissionsService;
 
 import se.fredsfursten.plugintools.ConfigurableFormat;
+import se.fredsfursten.plugintools.Misc;
 
 public class RankUp {
 	private static RankUp singleton = null;
-	private static ConfigurableFormat giveCommandFormat;
+	private static ConfigurableFormat setGroupCommand;
 	private static ConfigurableFormat playTimeMessage;
 	private static ConfigurableFormat nextRankMessage;
+	private static ConfigurableFormat rankedUpToGroupMessage;
+	private static ConfigurableFormat highestRankMessage;
 
 	private JavaPlugin plugin = null;
 	private ZPermissionsService permissionService = null;
@@ -26,12 +29,16 @@ public class RankUp {
 	private Integer[] afterHours;
 
 	private RankUp() {
-		giveCommandFormat = new ConfigurableFormat("GiveCommand", 3,
-				"give %s %s %d");
+		setGroupCommand = new ConfigurableFormat("SetGroupCommand", 2,
+				"perm player %s addgroup %s");
 		playTimeMessage = new ConfigurableFormat("PlayTimeMessage", 1,
 				"You have played %d hours.");
 		nextRankMessage = new ConfigurableFormat("NextRankMessage", 2,
 				"You have %d hours left to rank %s.");
+		rankedUpToGroupMessage = new ConfigurableFormat("RankedUpToGroupMessage", 1,
+				"You have been ranked up to group %s!");
+		highestRankMessage = new ConfigurableFormat("HighestRankMessage", 1,
+				"You have reached the highest rank, %s!");
 		List<String> stringList = RankUpPlugin.getPluginConfig().getStringList("RankGroups");
 		if (stringList == null) this.rankGroups = new String[0];
 		else this.rankGroups = stringList.toArray(new String[0]);
@@ -103,23 +110,26 @@ public class RankUp {
 	}
 
 	public void rankup(Player player) {
+		String currentGroup = null;
+		if (this.permissionService == null) {
+			player.sendMessage("RankUp doesn't work without the zPermissions plugin");			
+		} else {
+			currentGroup = reportCurrentGroup(player);
+		}
+		
 		int playTimeHours = 0;
 		if (this.oraclePlugin == null) {
 			player.sendMessage("RankUp doesn't work without the Oracle plugin");
 		} else {
 			playTimeHours = reportPlayTime(player, playTimeHours);
 		}
-		if (this.permissionService == null) {
-			player.sendMessage("RankUp doesn't work without the zPermissions plugin");			
-		} else {
-			reportGroupMembership(player);
-		}
-		addRelevantGroups(player, playTimeHours);
+
+		addRelevantGroups(player, currentGroup, playTimeHours);
 		reportNextGroup(player, playTimeHours);
 	}
 
 	private int reportPlayTime(Player player, int playTimeHours) {
-		Integer playTime = Oracle.playtimeHours.get(player.getUniqueId());
+		Integer playTime = Oracle.playtimeHours.get(player);
 		if (playTime == null) {
 			player.sendMessage(String.format("Could not find any playtime information for player %s.", player.getName()));
 		} else {
@@ -129,13 +139,34 @@ public class RankUp {
 		return playTimeHours;
 	}
 
-	private void reportGroupMembership(Player player) {
+	private String reportCurrentGroup(Player player) {
+		String lastGroup = null;
 		Set<String> groups = this.permissionService.getPlayerGroups(player.getUniqueId());
 		if ((groups == null) || (groups.size() == 0)) {
 			player.sendMessage("You are not member of any groups");
 		} else {
-			for (String groupName : groups) {
-				player.sendMessage(String.format("You are a member of group %s.", groupName));
+			for (String s : this.rankGroups) {
+				if (groups.contains(s)) lastGroup = s;
+			}
+			if (lastGroup != null) {
+				player.sendMessage(String.format("You are currently ranked as %s.", lastGroup));
+			}
+		}
+		return lastGroup;
+	}
+	private void addRelevantGroups(Player player, String currentGroup, int playTimeHours) {
+		for (int i = 0; i < this.afterHours.length; i++) {
+			int rankHour = this.afterHours[i].intValue();
+			String groupName = this.rankGroups[i];
+			if (rankHour > playTimeHours) {
+				break;
+			}
+			// Increase rank?
+			if (currentGroup == null) {
+				Misc.executeCommand(RankUp.setGroupCommand.getMessage(player.getName(), groupName));
+				RankUp.rankedUpToGroupMessage.sendMessage(player, groupName);			
+			} else {
+				if (groupName.equalsIgnoreCase(currentGroup)) currentGroup = null;
 			}
 		}
 	}
@@ -150,19 +181,8 @@ public class RankUp {
 				return groupName;
 			}
 		}
-		player.sendMessage(String.format("You have reached the highest rank, %s.", groupName));					
+		RankUp.highestRankMessage.sendMessage(player, groupName);		
 		return null;
 	}
 
-	private void addRelevantGroups(Player player, int playTimeHours) {
-		for (int i = 0; i < this.afterHours.length; i++) {
-			int rankHour = this.afterHours[i].intValue();
-			String groupName = this.rankGroups[i];
-			if (rankHour > playTimeHours) {
-				break;
-			}
-			// Increase rank
-			player.sendMessage(String.format("Added you to group %s.", groupName));
-		}
-	}
 }

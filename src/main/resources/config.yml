@@ -1,13 +1,21 @@
 RankGroups: [Member, Citizen, Veteran, Legendary]
 AfterHours: [2, 24, 96, 1000]
 #
-# GiveCommand has 3 parameters: <player> (%s), <item> (%s), <amount> (%d)
-GiveCommand: give %s %s %d
+# SetGroupCommand has 2 parameters: <player name>(%s) <group name>(%s)
+SetGroupCommand: perm player %s addgroup %s
+#
+# CurrentRankMessage has 2 parameters: <hours remaining>(%d) <next rank>(%s)
+CurrentRankMessage: You are currently ranked as %s.
 #
 # PlayTimeMessage has 1 parameter: <playtime in hours>(%d)
 PlayTimeMessage: You have played %d hours.
-
+#
+# RankedUpToGroupMessage has 1 parameter: <group name>(%s)
+RankedUpToGroupMessage: You have been ranked up to group %s!
 #
 # NextRankMessage has 2 parameters: <hours remaining>(%d) <next rank>(%s)
 NextRankMessage: You have %d hours left to rank %s.
+#
+# HighestRankMessage has 1 parameter: <higest rank>(%s)
+HighestRankMessage: You have reached the highest rank, %s!
 
