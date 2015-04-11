@@ -1,0 +1,16 @@
+name: RankUpPlugin
+main: se.fredsfursten.rankupplugin.RankUpPlugin
+version: 0.1
+author: vanbrayne
+depend: [EithonLibraryPlugin]
+softdepend: [zPermissions]
+description: A Minecraft plugin for RankUP fixes
+commands:
+  rankup:
+    description: Fix things other plugins fail to do
+    usage: /rankup
+    permission-message: You don't have <permission>
+permissions:
+  rankup.*:
+    description: Gives access to all rankup commands
+    default: op

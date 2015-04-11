@@ -1,0 +1,13 @@
+RankGroups: [Member, Citizen, Veteran, Legendary]
+AfterHours: [2, 24, 96, 1000]
+#
+# GiveCommand has 3 parameters: <player> (%s), <item> (%s), <amount> (%d)
+GiveCommand: give %s %s %d
+#
+# PlayTimeMessage has 1 parameter: <playtime in hours>(%d)
+PlayTimeMessage: You have played %d hours.
+
+#
+# NextRankMessage has 2 parameters: <hours remaining>(%d) <next rank>(%s)
+NextRankMessage: You have %d hours left to rank %s.
+
