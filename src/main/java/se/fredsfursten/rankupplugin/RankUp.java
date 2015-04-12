@@ -13,6 +13,7 @@ import org.tyrannyofheaven.bukkit.zPermissions.ZPermissionsService;
 
 import se.fredsfursten.plugintools.ConfigurableFormat;
 import se.fredsfursten.plugintools.Misc;
+import se.fredsfursten.plugintools.PluginConfig;
 
 public class RankUp {
 	private static RankUp singleton = null;
@@ -29,24 +30,6 @@ public class RankUp {
 	private Integer[] afterHours;
 
 	private RankUp() {
-		setGroupCommand = new ConfigurableFormat("SetGroupCommand", 2,
-				"perm player %s addgroup %s");
-		playTimeMessage = new ConfigurableFormat("PlayTimeMessage", 1,
-				"You have played %d hours.");
-		nextRankMessage = new ConfigurableFormat("NextRankMessage", 2,
-				"You have %d hours left to rank %s.");
-		rankedUpToGroupMessage = new ConfigurableFormat("RankedUpToGroupMessage", 1,
-				"You have been ranked up to group %s!");
-		highestRankMessage = new ConfigurableFormat("HighestRankMessage", 1,
-				"You have reached the highest rank, %s!");
-		List<String> stringList = RankUpPlugin.getPluginConfig().getStringList("RankGroups");
-		if (stringList == null) this.rankGroups = new String[0];
-		else this.rankGroups = stringList.toArray(new String[0]);
-		Bukkit.getLogger().info(String.format("RankGroups: %s", arrayToString(this.rankGroups)));
-		List<Integer> integerList = RankUpPlugin.getPluginConfig().getIntegerList("AfterHours");
-		if (integerList == null) this.afterHours = new Integer[0];
-		else this.afterHours = integerList.toArray(new Integer[0]);
-		Bukkit.getLogger().info(String.format("RankHours: %s", arrayToString(this.afterHours)));
 	}
 
 	private String arrayToString(String[] stringList) {
@@ -79,6 +62,25 @@ public class RankUp {
 
 	void enable(JavaPlugin plugin){
 		this.plugin = plugin;
+		PluginConfig config = PluginConfig.get(plugin);
+		setGroupCommand = new ConfigurableFormat(config, "SetGroupCommand", 2,
+				"perm player %s addgroup %s");
+		playTimeMessage = new ConfigurableFormat(config, "PlayTimeMessage", 1,
+				"You have played %d hours.");
+		nextRankMessage = new ConfigurableFormat(config, "NextRankMessage", 2,
+				"You have %d hours left to rank %s.");
+		rankedUpToGroupMessage = new ConfigurableFormat(config, "RankedUpToGroupMessage", 1,
+				"You have been ranked up to group %s!");
+		highestRankMessage = new ConfigurableFormat(config, "HighestRankMessage", 1,
+				"You have reached the highest rank, %s!");
+		List<String> stringList = config.getStringList("RankGroups");
+		if (stringList == null) this.rankGroups = new String[0];
+		else this.rankGroups = stringList.toArray(new String[0]);
+		Bukkit.getLogger().info(String.format("RankGroups: %s", arrayToString(this.rankGroups)));
+		List<Integer> integerList = config.getIntegerList("AfterHours");
+		if (integerList == null) this.afterHours = new Integer[0];
+		else this.afterHours = integerList.toArray(new Integer[0]);
+		Bukkit.getLogger().info(String.format("RankHours: %s", arrayToString(this.afterHours)));
 		connectToPermissionService();
 		connectToOracle(plugin);
 	}

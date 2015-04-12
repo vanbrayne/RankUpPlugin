@@ -4,27 +4,20 @@ import java.io.File;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import se.fredsfursten.plugintools.ConfigurableFormat;
+import se.fredsfursten.plugintools.Misc;
 import se.fredsfursten.plugintools.PluginConfig;
 
 public final class RankUpPlugin extends JavaPlugin implements Listener {
 	private static File RankUpStorageFile;
-	private static PluginConfig configuration;
 
 	@Override
-	public void onEnable() {
-		if (configuration == null) {
-			configuration = new PluginConfig(this, "config.yml");
-		} else {
-			configuration.load();
-		}
-		ConfigurableFormat.enable(getPluginConfig());
-
+	public void onEnable() {	
+		Misc.enable(this);
+		PluginConfig.get(this);
 		RankUpStorageFile = new File(getDataFolder(), "RankUp.bin");
 		getServer().getPluginManager().registerEvents(this, this);	
 		Commands.get().enable(this);
@@ -59,15 +52,5 @@ public final class RankUpPlugin extends JavaPlugin implements Listener {
 	public static File getStorageFile()
 	{
 		return RankUpStorageFile;
-	}
-
-	public static FileConfiguration getPluginConfig()
-	{
-		return configuration.getFileConfiguration();
-	}
-	
-	public static void reloadConfiguration()
-	{
-		configuration.load();
 	}
 }
