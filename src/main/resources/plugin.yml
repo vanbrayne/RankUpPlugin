@@ -1,6 +1,6 @@
 name: RankUpPlugin
 main: se.fredsfursten.rankupplugin.RankUpPlugin
-version: 0.3
+version: 1.0
 author: vanbrayne
 depend: [EithonLibraryPlugin]
 softdepend: [zPermissions]

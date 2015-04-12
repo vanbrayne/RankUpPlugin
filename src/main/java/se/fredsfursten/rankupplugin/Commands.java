@@ -8,8 +8,6 @@ public class Commands {
 	private static Commands singleton = null;
 	private static final String RANKUP_COMMAND = "/rankup";
 
-	private JavaPlugin plugin = null;
-
 	private Commands() {
 	}
 
@@ -22,7 +20,6 @@ public class Commands {
 	}
 
 	void enable(JavaPlugin plugin){
-		this.plugin = plugin;
 	}
 
 	void disable() {
