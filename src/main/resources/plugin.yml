@@ -1,9 +1,9 @@
 name: RankUpPlugin
 main: se.fredsfursten.rankupplugin.RankUpPlugin
-version: 1.0
+version: 1.0.1
 author: vanbrayne
 depend: [EithonLibraryPlugin]
-softdepend: [zPermissions]
+softdepend: [zPermissions, Oracle]
 description: A Minecraft plugin for RankUP fixes
 commands:
   rankup:

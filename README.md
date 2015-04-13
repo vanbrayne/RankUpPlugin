@@ -4,6 +4,10 @@ A RankUp plugin for Minecraft.
 
 ## Release history
 
+### 1.0.1 (2015-04-13)
+
+* NEW: Missing dependency.
+
 ### 1.0 (2015-04-12)
 
 * NEW: Release
